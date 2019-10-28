@@ -1,0 +1,11 @@
+#include <iostream>
+
+class bridgeImpl {
+public:
+	virtual void print()=0;
+};
+
+class b3Impl: public bridgeImpl {
+public:
+	print() { std::cout << "B3 implementation"} << std::endl;
+};
