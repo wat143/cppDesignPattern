@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+
+/**
+ *@brief  Menu class
+ */
+class Menu {
+public:
+	void setName(std::string s) { str = s; }
+	std::string getName() { return str; }
+private:
+	std::string str;
+};
+
+/**
+ *@brief  abstract class of Iterator 
+ */
+class Iterator {
+public:
+	~Iterator(){}
+	virtual Menu next()=0;
+	virtual int hasNext()=0;
+};
+
+/**
+ *@brief  abstract class of Aggregate
+ */
+class Aggregate {
+public:
+	~Aggregate(){}
+	virtual Iterator* createIterator()=0;
+};
+
+/**
+ *@brief  MenuBook class
+ */
+class MenuBook: public Aggregate {
+public:
+	MenuBook(int max): size(max) { list.resize(max); }
+	int getNumMenu() { return size; }
+	void attach(Menu m) { list.push_back(m); }
+	Menu getMenuByIndex(int index){ return list[index]; }
+	Iterator* createIterator();
+private:
+	std::vector<Menu> list;
+	int size;
+};
+
+/**
+ *@brief  MenuIterator class
+ */
+class MenuBookIterator :public Iterator {
+public:
+	MenuBookIterator(MenuBook m): book(m), index(0) {}
+	Menu next() {
+		index++;
+		return book.getMenuByIndex(index);
+	}
+	int hasNext() { return index < book.getNumMenu(); }
+private:
+	MenuBook book;
+	int index;
+};
+
+Iterator* MenuBook::createIterator() { return new MenuBookIterator(*this); }
+
+int main()
+{
+	Menu a, b;
+	MenuBook book(2);
+
+	a.setName("Curry");
+	b.setName("Ramen");
+	book.attach(a);
+	book.attach(b);
+
+	Iterator itr = book.createIterator();
+	std::cout << book.getNumMenu() << std::endl;
+	Menu tmp = book.getMenuByIndex(0);
+
+	std::cout << tmp.getName() << std::endl;
+	std::cout << tmp.getName() << std::endl;
+
+	return 0;
+}
